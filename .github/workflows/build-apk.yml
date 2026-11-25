@@ -19,7 +19,10 @@ jobs:
           gradle-version: '8.9'
       - name: Unzip and Build APK
         run: |
-          unzip -o NepaliChristiyaBhajan_AndroidApp.zip
+          ls -la
+          ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
+          echo "Using zip: $ZIP_FILE"
+          unzip -o "$ZIP_FILE"
           cd NepaliChristiyaBhajanApp
           gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
