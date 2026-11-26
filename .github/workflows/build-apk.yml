@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,13 +22,18 @@ jobs:
           gradle-version: '8.9'
       - name: Unzip and Build APK
         run: |
-          ls -la
           ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
-          echo "Using zip: $ZIP_FILE"
           unzip -o "$ZIP_FILE"
           cd NepaliChristiyaBhajanApp
           gradle assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/NepaliChristiyaBhajan.apk
       - uses: actions/upload-artifact@v4
         with:
           name: NepaliChristiyaBhajan-APK
-          path: NepaliChristiyaBhajanApp/app/build/outputs/apk/debug/app-debug.apk
+          path: NepaliChristiyaBhajanApp/app/build/outputs/apk/debug/NepaliChristiyaBhajan.apk
+      - name: Create Release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0
+          name: Nepali Christiya Bhajan v1.0
+          files: NepaliChristiyaBhajanApp/app/build/outputs/apk/debug/NepaliChristiyaBhajan.apk
